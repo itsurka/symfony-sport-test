@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  php:
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: 1
+      XDEBUG_CONFIG: remote_host=192.168.1.6
+      PHP_IDE_CONFIG: "serverName=sport.local"
+    build:
+      context: docker/php
+      dockerfile: Dockerfile
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./symfony:/var/www
+  nginx:
+    depends_on:
+      - php
+    image: nginx:latest
+    ports:
+      - "23180:80"
+    volumes:
+      - ./symfony/:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/nginx/logs:/var/log/nginx/
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 23106:3306
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+
+volumes:
+  db_data:
