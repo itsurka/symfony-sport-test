@@ -1,4 +1,8 @@
-Примеры запросов
+### Установка приложения: 
+1. `docker-compose up -d`
+2. `php bin/console doctrine:migrations:migrate`
+
+### Примеры запросов
 
 - Добавление
  
